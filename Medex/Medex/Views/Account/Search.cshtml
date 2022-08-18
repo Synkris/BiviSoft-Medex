@@ -1,0 +1,40 @@
+﻿@model Medex.Models.Doctor;
+
+
+@{
+
+    ViewData["Title"] = "LogIn";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+<hr />
+
+<div class="container mt">
+    <div class="row">
+        <div class="col">
+            <form id="contactus" asp-action="LogIn" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" required />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PasswordHash" class="control-label"></label>
+                    <input asp-for="PasswordHash" class="form-control" required/>
+                    <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                </div>
+                <div class="form-group text-center">
+                    <input asp-action="Create" type="submit" value="LogIn" class="btn color w-50" />
+                </div>
+                <div class="form-group offset-11">
+                    <a asp-action="LogIn">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+

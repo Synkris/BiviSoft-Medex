@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Medex</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light color border-bottom box-shadow mb-3">
+            <div class="container">
+                <h1><a class="navbar-brand" href="#" style="font-style: italic;">Mede<span style="color: green;font-size: 70px; width: 30%; padding-right: 100px;">X</span></a></h1>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between p-3">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="AboutUs">About Us</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="ViewDoctor">Doctors</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Services">Services</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Blog">Blog</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="LogIn">Log-In</a>
+                        </li>
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="WorkHourSetUp">
+                                Work Hour
+                            </a>
+                        </li>
+                        @*<li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Patient" asp-action="ViewDoctor">
+                               Doctors
+                            </a>
+                        </li>*@
+                        <li class="nav-item p-3">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Doctor" asp-action="DashBoard">
+                                Dashboard
+                            </a>
+                        </li>
+
+
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted color">
+        <div class="container-fluid pt-3">
+            <div class="row ">
+                <div class="col mt-3 p-3">
+                    <div class="each-widget text-center">
+                        <i class="pe-7s-phone font-36 mb-10"></i>
+                        <h5 class="text-white">Call Us</h5>
+                        <p style="color: #007bff;">Phone: (234)7066017177</p>
+                    </div>
+                </div>
+                <div class="col mt-3 p-3">
+                    <div class="each-widget text-center">
+                        <i class="pe-7s-map font-36 mb-10"></i>
+                        <h5 class="text-white">Address</h5>
+                        <p style="color: #007bff;">45 Chime Avenu, New Heaven Enugu.</p>
+                    </div>
+                </div>
+                <div class="col mt-3 p-3">
+                    <div class="each-widget text-center">
+                        <i class="pe-7s-mail font-36 mb-10"></i>
+                        <h5 class="text-white">Email</h5>
+                        <p><a href="mailto:agbo4chris4chris.com">agbo4chris@yahoo.com</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col p-3 text-center">
+                    <a href="">Privacy Policy</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col d-lg-inline-flex justify-content-center">
+                    <ul>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a> </li>
+                    </ul>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a> </li>
+                    </ul>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-pinterest"></i></a> </li>
+                    </ul>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a> </li>
+                    </ul>
+                    <ul>
+                        <li><a href="#"><i class="fa fa-youtube"></i></a> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="container text-center">
+                &copy; 2022 - Medex - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,139 @@
+/*body{
+	background-color: white;
+	margin: 0px;
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: 12px;
+	line-height: 1.6em;
+}
+.container{
+	width: 100%;
+	height: 100px;
+	background-color: red;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+  margin-left: 20%;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+Change the link color to #111 (black) on hover
+li a:hover {
+  background-color: #111;*/
+}
+body, html{
+	background-color:#aa2;
+	margin:0px;
+	padding:0px;
+}
+.container-wrapper{
+	width:100%;
+	margin:0px;
+	float:left;
+	background-color:#fff;
+}
+.firstDv{
+	width:100%;
+	height:20px;
+	margin:0px;
+	padding:25px;
+	background-color:lightblue;
+}
+.folk{
+	width:30%;
+	float:left;
+	/*border: 1px solid #000;*/
+	padding:5px;
+	margin-left:5px;
+
+}
+.dolk{
+	width:30%;
+	float:left;
+	/*border: 1px solid #000;*/
+	padding:5px;
+	margin-left:5px;
+	
+}
+.dolk{
+	width:30%;
+	float:left;
+	/*border: 1px solid #000;*/
+	padding:5px;
+	margin-left:5px;
+}
+.coolk{
+	width:30%;
+	float:left;
+	padding:5px;
+	margin-left:5px;
+}
+.headerdiv{
+	width: 100%;
+	height:auto;
+	margin:0px;
+	background-color:white;
+}
+ul h2{
+	display:inline;
+	margin-left:20%;
+}
+.navbar{
+	width:100%;
+	height:auto;
+	margin:0px;
+	background-color:blue;
+	padding:5px;
+}
+.navbar ul{
+	list-style:none;
+	margin:5px;
+	padding:3px;
+}
+ul li{
+	display: inline;
+	font-weight:bold;
+	padding: 3px;
+	margin-left: 3%;
+}
+li a{
+	text-decoration:none;
+	color:#fff;
+	margin-left:20px;
+}
+.imageback{
+	width: 100%;
+	height:700px;
+	background-image:url('../images/m2.webp');
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+}
+.images {
+	width: 5%;
+	height: 10px;
+
+}
+
+.footer{
+	width: 100%;
+	height:auto;
+	margin:0px;
+	background-color: darkblue;
+	color:blue;
+	font-weight: bolder;
+	padding:3%;
+}

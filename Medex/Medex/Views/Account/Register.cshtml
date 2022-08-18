@@ -1,0 +1,89 @@
+﻿@model Medex.Models.Doctor;
+
+
+@{
+
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+<hr />
+<body>
+    <div class="container mt">
+        <div class="row">
+            <div class="col">
+                <div class="form-group text-center mb-5">
+                    <h1>Register</h1>
+                    <p>To register yourself as a Doctor, visit www.medex.com, click Register/Log-In button on the top of the page and fill in the required fields. </p>
+                </div>
+                @if (Model != null)
+                {
+                    if (Model.ErrorHappened)
+                    {
+                        <div class="alert alert-danger alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Message:</strong> <b> @Model.Message   </b>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success alert-dismissible">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Message:</strong> <b>  @Model.Message  </b>
+                        </div>
+                    }
+
+
+                }
+                <form id="contactus" asp-action="Register" method="post" enctype="multipart/form-data">
+                    <div class="form-group text-center">
+
+
+                        <input asp-for="ImageUrl" type="file" />
+
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DepartmentId" class="control-label"></label>
+                        <select asp-for="DepartmentId" class="form-control select" asp-items="@(new SelectList(@ViewBag.MedexDepartment, "Id", "Name"))"> </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="control-label"></label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                    </div>
+                    <div class="form-group text-center">
+                        <input asp-action="Register" type="submit" value="Register" class="btn color w-50" />
+                    </div>
+                    <div class="form-group offset-11">
+                        <a asp-action="Register">Back to List</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+<hr />
+
+
+

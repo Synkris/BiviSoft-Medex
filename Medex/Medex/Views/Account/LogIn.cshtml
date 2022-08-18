@@ -1,0 +1,65 @@
+﻿@model Medex.Models.Doctor;
+
+
+@{
+
+    ViewData["Title"] = "LogIn";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+
+<hr />
+
+<div class="container mt">
+    <div class="row">
+        <div class="col">
+            <div class="form-group text-center mb-5">
+                <h1><i class="fa fa-arrow-right"></i></h1>
+                <h1>Log In</h1>
+                <p class="color1">This is a log in page for Doctor's. To Log-In yourself as a Doctor, visit www.medex.com, click Log-In button on the top of the page and fill in the required fields.</p>
+            </div>
+            @if (Model != null)
+            {
+                if (Model.ErrorHappened)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Message: </strong> <b>@Model.Message </b>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="alert alert-success alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>Message: </strong> <b>@Model.Message </b>
+                    </div>
+                }
+            }
+            <form id="contactus" asp-action="LogIn" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" type="text" class="form-control" required />             
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" required />
+                </div>
+                <div class="form-group text-center">
+                    <input asp-action="LogIn" type="submit" value="LogIn" class="btn color w-50" />
+                </div>
+                <div class="form-group offset-11">
+                    <a asp-action="LogIn">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+        
+
+
+
+<hr />
+
+

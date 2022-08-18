@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Medex.Models.WorkHour>
+@{
+    ViewData["Title"] = "ViewRegister";
+}
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link href="~/css/site.css" rel="stylesheet" />
+
+<link href="~/css/font-awesome.min.css" rel="stylesheet" />
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center m-3 p-3">
+                <h1><i class="fa fa-user-md"></i></h1>
+                <h1>Doctors Dashboard</h1>
+                <p> Sign-In/Register to login using your email address as ID and your Password set during registration. It will open your selected doctor’s calendar</p>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="container">
+        <div class="row">
+            @if (Model != null && Model.Count() > 0)
+            {
+
+                <div class="col-lg-12 col-sm-12 col-xl-12 col-xl-12 col-xs-12 p-3">
+                    <h2>
+                        Doctors
+                    </h2>
+                    <p>The work hour table-striped class adds zebra-stripes to a table:</p>
+                    <table class="table table-striped">
+                        <thead class="color">
+                            <tr>
+                                <th>S/No</th>
+                                <th>Fullname</th>
+                                <th>Days of Weeks</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Active Hour</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var doctorsworkHour in Model)
+                            {
+                                var fulName = doctorsworkHour.Doctor.FirstName + " " + doctorsworkHour.Doctor.LastName;
+                                <tr>
+                                    <td></td>
+                                    <td>@fulName</td>
+                                    <td>@doctorsworkHour.WeekDays</td>
+                                    @if (doctorsworkHour.StartTime.Hours > 12)
+                                    {
+                                        <td>@doctorsworkHour.StartTime PM</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@doctorsworkHour.StartTime AM</td>
+                                    }
+                                    @if (doctorsworkHour.EndTime.Hours > 12)
+                                    {
+                                        <td>@doctorsworkHour.EndTime PM</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@doctorsworkHour.EndTime AM</td>
+                                    }
+
+
+                                    <td>@doctorsworkHour.ActiveHours</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+            }
+
+
+        </div>
+
+    </div>
+</body>
+
+<hr />
+<style>
+
+    body {
+        counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+    }
+
+    tr td:first-child:before {
+        counter-increment: Serial; /* / Increment the Serial counter /*/
+        content: counter(Serial); /*  / Display the counter /*/
+    }
+</style>

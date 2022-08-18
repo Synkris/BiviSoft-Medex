@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Medex/Medex/bin/Debug/net5.0
+/.vs
+/Medex/.vs/Medex
+/Medex/Medex/obj
+/Medex/Medex/Properties
