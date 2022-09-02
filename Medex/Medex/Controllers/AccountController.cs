@@ -1,4 +1,5 @@
 ﻿using Medex.DATA;
+using Medex.IHelper;
 using Medex.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -18,20 +19,23 @@ namespace Medex.Controllers
           private readonly UserManager<Doctor> ourUserManger;
           private readonly SignInManager<Doctor> signInManager;
           private readonly IWebHostEnvironment _webHostEnvironment;
-        public AccountController(MedexDbContext db, UserManager<Doctor> injectedUserManager, SignInManager<Doctor> injectedSignInManager, IWebHostEnvironment injectedWebHostEnvironment)
-          {
-              _db = db;
-              ourUserManger = injectedUserManager;
-             signInManager = injectedSignInManager;
+          private readonly  IAccountService ourAccountService;
+        public AccountController(MedexDbContext db, UserManager<Doctor> injectedUserManager, SignInManager<Doctor> injectedSignInManager, 
+            IWebHostEnvironment injectedWebHostEnvironment, IAccountService injectedAccountService)
+        {
+            _db = db;
+            ourUserManger = injectedUserManager;
+            signInManager = injectedSignInManager;
             _webHostEnvironment = injectedWebHostEnvironment;
-          }
+            ourAccountService = injectedAccountService;
+        }
 
-        
+
         //GET || Register
         [HttpGet]
         public IActionResult Register()
         {
-            ViewBag.MedexDepartment = GetAllTheDepartment();
+            ViewBag.MedexDepartment = ourAccountService.GetAllTheDepartment();
             return View();
         }
 
@@ -41,8 +45,9 @@ namespace Medex.Controllers
         {
             try
             {
-                ViewBag.MedexDepartment = GetAllTheDepartment();
-                string docProfilePictureFilePath = string.Empty;
+                // We are Validating User Details For Register
+                ViewBag.MedexDepartment = ourAccountService.GetAllTheDepartment();
+
 
                 if (doctorDetailsForReg.Email == null)
                 {
@@ -78,9 +83,9 @@ namespace Medex.Controllers
                     doctorDetailsForReg.ErrorHappened = true;
                     return View(doctorDetailsForReg);
                 }
+                //  Validating User Details For Register stops here
 
-               
-
+                // Query the user details if it exists in thr Db B4 Authentication
                 var queryDoctorTableWithEmail = await ourUserManger.Users.Where(s => s.Email == doctorDetailsForReg.Email)?.FirstOrDefaultAsync();
                 if (queryDoctorTableWithEmail != null)
                 {
@@ -96,39 +101,29 @@ namespace Medex.Controllers
                     doctorDetailsForReg.ErrorHappened = true;
                     return View(doctorDetailsForReg);
                 }
-
-
-                if(doctorDetailsForReg.ImageUrl == null)
+                // End of Query  4  the user details if it exists in thr Db B4 Authentication
+                if (doctorDetailsForReg.ImageUrl == null)
                 {
                     doctorDetailsForReg.Message = "Please Upload your picture";
                     doctorDetailsForReg.ErrorHappened = true;
                     return View(doctorDetailsForReg);
                 }
-                else
-                {
-                    docProfilePictureFilePath = UploadedFile(doctorDetailsForReg);
-                }
 
-                var newInstanceOfDoctorModelAboutToBCreated = new Doctor();
-                {
-                    newInstanceOfDoctorModelAboutToBCreated.FirstName = doctorDetailsForReg.FirstName;
-                    newInstanceOfDoctorModelAboutToBCreated.LastName = doctorDetailsForReg.LastName;
-                    newInstanceOfDoctorModelAboutToBCreated.Email = doctorDetailsForReg.Email;
-                    newInstanceOfDoctorModelAboutToBCreated.PhoneNumber = doctorDetailsForReg.PhoneNumber;
-                    newInstanceOfDoctorModelAboutToBCreated.DepartmentId = doctorDetailsForReg.DepartmentId;
-                    newInstanceOfDoctorModelAboutToBCreated.UserName = doctorDetailsForReg.Email;
-                    newInstanceOfDoctorModelAboutToBCreated.ProfilePicture = docProfilePictureFilePath;
-                };
-                var cretedDoctor = await ourUserManger.CreateAsync(newInstanceOfDoctorModelAboutToBCreated, doctorDetailsForReg.Password);
-                if (cretedDoctor.Succeeded)
+                var returndResultFrmRegisterService = await  ourAccountService.RegisterDoctorService(doctorDetailsForReg);
+                if (returndResultFrmRegisterService != null)
                 {
                     doctorDetailsForReg.Message = "Doctor Created Succesfully.";
                     doctorDetailsForReg.ErrorHappened = false;
-                    return View(doctorDetailsForReg);
+                    return RedirectToAction("WorkHourSetUp", "Doctor");
                 }
-                doctorDetailsForReg.Message = "Internal Error Occured";
-                doctorDetailsForReg.ErrorHappened = true;
-                return View(doctorDetailsForReg);
+                else
+                {
+                    doctorDetailsForReg.Message = "Internal Error Occured";
+                    doctorDetailsForReg.ErrorHappened = true;
+                    return View(doctorDetailsForReg);
+
+
+                }
 
             }
             catch (Exception)
@@ -136,29 +131,6 @@ namespace Medex.Controllers
 
                 throw;
             }         
-        }
-
-        public string UploadedFile(Doctor filesSender)
-        {
-            string uniqueFileName = string.Empty;
-
-            if (filesSender.ImageUrl != null)
-            {
-                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "doctorUploads");
-                string pathString = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "doctorUploads");
-                if (!Directory.Exists(pathString))
-                {
-                    Directory.CreateDirectory(pathString);
-                }
-                uniqueFileName = Guid.NewGuid().ToString() + "_" + filesSender.ImageUrl.FileName;
-                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    filesSender.ImageUrl.CopyTo(fileStream);
-                }
-            }
-            var generatedPictureFilePath = "/doctorUploads/" + uniqueFileName;
-            return generatedPictureFilePath;
         }
 
         //GET || Log-in
@@ -175,6 +147,8 @@ namespace Medex.Controllers
         {
             try
             {
+
+                // We are Validating User Details For Login
                 if (doctorDetailsForLogin.Email == null)
                 {
                     doctorDetailsForLogin.Message = "Your mail was empty,please put mail.";
@@ -188,47 +162,117 @@ namespace Medex.Controllers
                     doctorDetailsForLogin.ErrorHappened = true;
                     return View(doctorDetailsForLogin);
                 }
+                //  Validating User Details For Login stops here
 
-                 var queryDoctorTableWithEmail = await ourUserManger.Users.Where(s => s.Email == doctorDetailsForLogin.Email)?.FirstOrDefaultAsync();
-                if(queryDoctorTableWithEmail == null)
+                // Query  4  the user with emaail detail if it exists in thr Db B4 Authentication
+                var queryDoctorTableWithEmail = await  ourAccountService.FindWithEmailAsync(doctorDetailsForLogin.Email);
+                if (queryDoctorTableWithEmail == null)
                 {
                     doctorDetailsForLogin.Message = "Your details was not found in our database, plaese register.";
                     doctorDetailsForLogin.ErrorHappened = true;
                     return View(doctorDetailsForLogin);
                 }
+                // End of Query  4  the user details if it exists in thr Db B4 Authentication
 
-                var result = await signInManager.PasswordSignInAsync(queryDoctorTableWithEmail.UserName, doctorDetailsForLogin.Password, true, false);
+
+                // We are using Ef Core IDDB SignIn Method with the params it needed to sign the user In & if it Succeeded it goes to the Dashboard
+                var result = await signInManager.PasswordSignInAsync(doctorDetailsForLogin.Email, doctorDetailsForLogin.Password, true, false);
                 if (result.Succeeded)
                 {
 
                     return RedirectToAction("ViewDoctor", "Patient");
                 }
+                // We are using Ef Core IDDB SignIn Method with the params it needed to sign the user In & if it Succeeded it goes to the Dashboard
+
+
                 doctorDetailsForLogin.Message = "wrong password, log-in failed.";
                 doctorDetailsForLogin.ErrorHappened = true;
                 return View(doctorDetailsForLogin);
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
+
            
         }
 
-            public List<Department> GetAllTheDepartment()
-            {
-                var newDepartment = new Department()
-                {
-                    Id = 0,
-                    Name = "---Select Department---"
-                };
-                var getAllTheDepartment =  _db.Departments.Where(x => x.Active == true).ToList();
-                getAllTheDepartment.Insert(0, newDepartment);
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
 
-                return getAllTheDepartment;
+        //GET || Edit
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
             }
+            var obj = _db.Doctors.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+        //POST || Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Doctor doctorDetailsForReg)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Doctors.Update(doctorDetailsForReg);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(doctorDetailsForReg);
+
+
+        }
+        //GET || Delete
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.Doctors.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+        //POST || Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(Doctor doctorDetailsForReg)
+        {
+            if (doctorDetailsForReg == null)
+            {
+
+                return NotFound();
+
+            }
+            _db.Doctors.Remove(doctorDetailsForReg);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+
+
+
 
 
     }

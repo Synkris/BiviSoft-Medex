@@ -34,6 +34,7 @@ namespace Medex.Models
         public string Password { get; set; }
         [NotMapped]
         public string ConfirmPassword { get; set; }
+        public bool Deactivated { get; set; }
 
         [NotMapped]
         public string Message { get; set; }

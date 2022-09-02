@@ -38,5 +38,69 @@ namespace Medex.Controllers
            
             return View();  
         }
+
+        //GET || Edit
+        [HttpGet]
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.Doctors.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+        //POST || Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Doctor doctorDetailsForReg)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Doctors.Update(doctorDetailsForReg);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(doctorDetailsForReg);
+
+
+        }
+        //GET || Delete
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var obj = _db.Doctors.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            return View(obj);
+        }
+        //POST || Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(Doctor doctorDetailsForReg)
+        {
+            if (doctorDetailsForReg == null)
+            {
+
+                return NotFound();
+
+            }
+            _db.Doctors.Remove(doctorDetailsForReg);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
     }
 }

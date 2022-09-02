@@ -1,4 +1,5 @@
 ﻿using Medex.DATA;
+using Medex.IHelper;
 using Medex.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,39 +15,42 @@ namespace Medex.Controllers
     {
         private readonly MedexDbContext _db;
         private readonly UserManager<Doctor> ourUserManger;
-        public DoctorController(MedexDbContext db, UserManager<Doctor> injectedUserManager)
+        private readonly IAccountService ourAccountService;
+        public DoctorController(MedexDbContext db, UserManager<Doctor> injectedUserManager, IAccountService injectedAccountService)
         {
             _db = db;
             ourUserManger = injectedUserManager;
+            ourAccountService = injectedAccountService;
         }
 
         //GET || WorkHourSetUp
         [HttpGet]
         public IActionResult WorkHourSetUp()
         {
+           
             var logedInUser = User.Identity.Name;
             if(logedInUser == null)
             {
                 return RedirectToAction("LogIn","Account" );
             }
-            ViewBag.DaysOfTheWeek = DaysOfTheWeek();
+            ViewBag.DaysOfTheWeek = ourAccountService.DaysOfTheWeek();
             return View();
         }
 
         //POST || WorkHourSetUp
         [HttpPost]
-        public IActionResult WorkHourSetUp(WorkHour WorkHourSetUp)
+        public async Task<IActionResult> WorkHourSetUpAsync(WorkHour WorkHourSetUp)
         {
             try
             {
-                ViewBag.DaysOfTheWeek = DaysOfTheWeek();
+                // We are Validating User Details For WorkHourSetUp
+                ViewBag.DaysOfTheWeek = ourAccountService.DaysOfTheWeek();
 
-                if (((int)WorkHourSetUp.WeekDays) == 11)
+                if (((int)WorkHourSetUp.WeekDays) == 0)
                 {
                     WorkHourSetUp.Message = "please put the day of the week";
                     WorkHourSetUp.ErrorHappened = true;
                     return View(WorkHourSetUp);
-
                 }
                 if (WorkHourSetUp.StartTime == TimeSpan.MinValue)
                 {
@@ -63,42 +67,26 @@ namespace Medex.Controllers
                     return View(WorkHourSetUp);
                 }
 
-                if (WorkHourSetUp.ActiveHours != 0)
-                {
-                    WorkHourSetUp.Message = "please input your active hour.";
-                    WorkHourSetUp.ErrorHappened = true;
-                    return View(WorkHourSetUp);
-                }
 
+
+                // Query the user details with UserName, if it exists in thr Db B4 Authentication
                 var currentUserName = User.Identity.Name;
-                var fullLogedInUser = ourUserManger.Users.Where(s => s.UserName == currentUserName).FirstOrDefault();
-                if(fullLogedInUser != null)
+                var returnedResultFrmRegWorkHour = await ourAccountService.RegisterWorkHourSetUp(WorkHourSetUp, currentUserName);
+                if (returnedResultFrmRegWorkHour != null)
                 {
-                    var workHour = WorkHourSetUp.EndTime.Hours - WorkHourSetUp.StartTime.Hours;
-                    var totalWorkHours = workHour;
-                    var newInstanceOfWorkHourSetUpAboutToBCreated = new WorkHour();
-                    {
-                        newInstanceOfWorkHourSetUpAboutToBCreated.WeekDays = WorkHourSetUp.WeekDays;
-                        newInstanceOfWorkHourSetUpAboutToBCreated.StartTime = WorkHourSetUp.StartTime;
-                        newInstanceOfWorkHourSetUpAboutToBCreated.EndTime = WorkHourSetUp.EndTime;
-                        newInstanceOfWorkHourSetUpAboutToBCreated.ActiveHours = totalWorkHours;
-                        newInstanceOfWorkHourSetUpAboutToBCreated.DoctorId = fullLogedInUser.Id;
-                    };
-                    _db.Add(newInstanceOfWorkHourSetUpAboutToBCreated);
-                    var justSaveChanges = _db.SaveChanges();
+                   WorkHourSetUp.Message = " Work Hour Created Succesfully.";
+                   WorkHourSetUp.ErrorHappened = false;
+                   return RedirectToAction("DashBoard","Doctor");
+                }
+                else
+                {
+                   WorkHourSetUp.Message = "Internal Error Occured";
+                   WorkHourSetUp.ErrorHappened = true;
+                   return View(WorkHourSetUp);
 
-                    if (justSaveChanges != 0)
-                    {
-                        WorkHourSetUp.Message = "Doctor Work Hour Created Succesfully.";
-                        WorkHourSetUp.ErrorHappened = false;
-                        return View("DashBoard");
-                    }
                 }
 
-               
-                WorkHourSetUp.Message = "Internal Error Occured";
-                WorkHourSetUp.ErrorHappened = true;
-                return View(WorkHourSetUp);
+            
 
             }
             catch (Exception)
@@ -111,44 +99,103 @@ namespace Medex.Controllers
         //GET || DashBoard
         [HttpGet]
         public IActionResult DashBoard()
+        
         {
             var logggedInDoctorUserName = User.Identity.Name;
-            var LoggedInDoctorFullDetails = ourUserManger.Users.Where(s => s.UserName == logggedInDoctorUserName).Include(d => d.Department).FirstOrDefault();
-            var queriedWorkHourRecordsWitCurrentDoctorId = _db.WorkHours.Where(wkH => wkH.DoctorId == LoggedInDoctorFullDetails.Id).Include(d => d.Doctor).ToList();
-
-            if(queriedWorkHourRecordsWitCurrentDoctorId != null && queriedWorkHourRecordsWitCurrentDoctorId.Count() > 0)
+            if (logggedInDoctorUserName != null)
             {
-                return View(queriedWorkHourRecordsWitCurrentDoctorId);
+                var LoggedInDoctorFullDetails = ourUserManger.Users.Where(s => s.UserName == logggedInDoctorUserName).Include(d => d.Department).FirstOrDefault();
+
+                var queriedWorkHourRecordsWitCurrentDoctorId = _db.WorkHours.Where(wkH => wkH.DoctorId == LoggedInDoctorFullDetails.Id /* && wkH.Deactivated != true*/).Include(d => d.Doctor).ToList();
+
+                if (queriedWorkHourRecordsWitCurrentDoctorId != null && queriedWorkHourRecordsWitCurrentDoctorId.Count() > 0 )
+                {
+                    return View(queriedWorkHourRecordsWitCurrentDoctorId);
+                }
+            }
+            else
+            {
+                return RedirectToAction("LogIn", "Account");
             }
             return View();
         }
-
-
-        public List<TemporaryModel> DaysOfTheWeek()
-        { 
-            var defualtTemporaryModel = new TemporaryModel()
-                {
-                    Id = 11,
-                    Name = "---- Select Day of the week ----"
-                };
-    
-            var getAllTheDaysOfWeek = Enum.GetValues(typeof(DayOfWeek)).Cast<DayOfWeek>()
-             .Select(tempoModel => new TemporaryModel()
-             { Id = (int)tempoModel, Name = tempoModel.ToString() })
-             .OrderBy(x => x.Id).ToList();
-
-            getAllTheDaysOfWeek.Insert(0, defualtTemporaryModel);
-            return getAllTheDaysOfWeek;
-
-        }
-
-        public class TemporaryModel
+        // GET|| Edit
+        [HttpGet]
+        public IActionResult Edit(int? id)
         {
-            public int Id { get; set; }
-            public string Name { get; set; }
+            ViewBag.DaysOfTheWeek = ourAccountService.DaysOfTheWeek();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var obj = _db.WorkHours.Find(id);
+            if (obj == null)
+            {
+                return View();
+            }
+
+            return View(obj);
+        }
+        //POST || Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(WorkHour doctorsNewWorkHour)
+        {
+            ViewBag.DaysOfTheWeek = ourAccountService.DaysOfTheWeek(); 
+
+            if (doctorsNewWorkHour != null)
+            {
+                var theCurruentDoctorsDetails = ourAccountService.UpdateEditWorkHourSetUp(doctorsNewWorkHour);
+                if (theCurruentDoctorsDetails.Contains("Successfully"))
+                {
+                    doctorsNewWorkHour.Message = "Update Successfully";
+                    return RedirectToAction("DashBoard", "Doctor");
+                }
+            }
+                doctorsNewWorkHour.ErrorHappened = false;
+                return View();
         }
 
+
+        // GET || Delete
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var WorkHourSetUp = _db.WorkHours.Find(id);
+            if (WorkHourSetUp == null)
+            {
+                return NotFound();
+            }
+
+            return View(WorkHourSetUp);
+        }
+
+       // POST || Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(WorkHour WorkHourSetUp)
+        {
+           // var getTheUserIdToDelete = _db.WorkHours.Where(s => s.Work)
+            if (WorkHourSetUp == null)
+            {
+
+                return NotFound();
+
+            }
+           // WorkHourSetUp.Deactivated = true;
+            _db.WorkHours.Remove(WorkHourSetUp);
+            _db.SaveChanges();
+            return RedirectToAction("WorkHourSetUp");
+
+        }
     }
 
 
-}
+
+
+    }
+

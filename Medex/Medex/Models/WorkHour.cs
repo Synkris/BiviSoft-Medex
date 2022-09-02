@@ -10,9 +10,11 @@ namespace Medex.Models
 {
     public class WorkHour : DefualtBaseModel
     {
+        [Required]
         public DayOfWeek WeekDays{ get; set; }
 
         public TimeSpan StartTime { get; set; }
+        public bool Deactivated { get; set; }
 
         public TimeSpan EndTime { get; set; }
 
