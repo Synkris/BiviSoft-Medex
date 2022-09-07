@@ -192,10 +192,21 @@ namespace Medex.Controllers
             return RedirectToAction("WorkHourSetUp");
 
         }
+
+
+
+        //// POST || AddDepartment
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult AddDepartment(Doctor docdetail)
+        //{
+        //    if(docdetail  == null)
+        //        return
+        //}
     }
 
 
 
 
-    }
+}
 
