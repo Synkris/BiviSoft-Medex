@@ -1,11 +1,12 @@
 ﻿@model IEnumerable<Medex.Models.Doctor>
 @{
     ViewData["Title"] = "ViewRegister";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
 <div class="container">
     <div class="row">
-        <div class="col text-center m-3 p-3">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12 text-center  text-success m-3 p-3">
             <h1><i class="fa fa-user-md"></i></h1>
             <h1>Search Doctor</h1>
             <p> Sign-In/Register to login using your email address as ID and your Password set during registration. It will open your selected doctor’s calendar</p>
@@ -22,9 +23,9 @@
         {
         @foreach (var doctor in Model)
         {
-            <div class="col p-3 ">
-                <div class="card" style="width: 18rem; font-weight:bolder">
-                    <img style="max-height:185px; " class="card-img-top rounded-circle" src="@doctor.ProfilePicture" alt="Card image cap">
+            <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xs-12 p-3">
+                <div class="card" id="contactus" style="width: 100%; font-weight:bolder">
+                    <img style="height:185px; " class="card-img-top rounded-circle" src="@doctor.ProfilePicture" alt="Card image cap">
                     <div class="card-body">
                         <h5 class="card-title"></h5>
                         <p class="card-text"><i class="fa fa-user-md"> : @doctor.FirstName, @doctor.LastName</i> </p>
@@ -45,5 +46,3 @@
 
     </div>
 </div>
-
-<hr />

@@ -1,0 +1,68 @@
+﻿@model Medex.Models.Department;
+
+@{
+
+    ViewData["Title"] = "AddDepartment";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<div class="container m">
+    <div class="row">
+        <div class="col">
+            <div class="form-group text-center mb-5  text-success">
+                <h1><i class="fa fa-arrow-right"></i></h1>
+                <h1>Add Department</h1>
+                <p class="color1">Add Department in this page for Doctor's. </p>
+            </div>
+            <div class="form-group text-center">
+                <label>Department</label>
+                <input id="departmentNameId" type="text" class="form-control w-50 text-center offset-3" required />
+            </div>
+            <div class="submit-section text-center">
+                <button type="submit" class="btn btn-primary submit-btn addingNewDepartment" onclick="addingNewDepartment()">Submit</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+@*<script>
+
+    $(document).ready(function () {
+
+        $('.addingNewDepartment').click()
+        {
+            debugger;
+                var department = {};
+                department.Name = $("#departmentNameId").val();
+                department.Active = true;
+                var departmentInSerializedMode = JSON.stringify(department);
+
+                $.ajax({
+                    type: 'POST',
+                    dataType : 'json',
+                    url: '/Department/AddNewDepartment', // we are calling json method
+                    data:
+                    {
+                        department: departmentInSerializedMode
+                    },
+
+                    success: function (result) {
+                        if (result.isError) {
+                            debugger;
+                            var retrunToThisUrl = location.url.reload("AddDepartment");
+                            newErrorAlert(result.msg, retrunToThisUrl);
+                        }
+                        else {
+                            debugger;
+                            var redirectUrl = "/Department/AddNewDepartment";
+                            newSuccessAlert(result.msg, redirectUrl)
+                        }
+                    },
+                    error: function (ex) {
+                        errorAlert(ex);
+                    }
+                });
+        }
+    });
+</script>*@

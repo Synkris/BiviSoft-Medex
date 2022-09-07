@@ -1,4 +1,6 @@
 using Medex.DATA;
+using Medex.Helper.AccountHelper;
+using Medex.IHelper;
 using Medex.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +41,7 @@ namespace Medex
 
             }).AddEntityFrameworkStores<MedexDbContext>();
             services.AddControllersWithViews();
+            services.AddScoped<IAccountService, AccountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

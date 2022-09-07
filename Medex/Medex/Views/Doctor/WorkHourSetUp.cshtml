@@ -7,13 +7,10 @@
 }
 
 <body>
-<div class="container mt">
+<div class="container m">
     <div class="row">
         <div class="col">
-            <div class="form-group text-center mb-5">
-                <h1>Work Hour</h1>
-                <p>This is the Doctor's work hour set up.  Patient or Doctor can access each other at anytime from anywhere in the world.</p>
-            </div>
+
             @if (Model != null)
             {
                 if (Model.ErrorHappened)
@@ -33,30 +30,31 @@
 
 
             }
-            <form id="contactus" asp-action="WorkHourSetUp" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label asp-for="WeekDays" class="control-label"></label>
-                    <select asp-for="WeekDays" class="form-control select" asp-items="@(new SelectList(@ViewBag.DaysOfTheWeek, "Id", "Name"))"> </select>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StartTime" class="control-label"></label>
-                    <input asp-for="StartTime" type="time" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label asp-for="EndTime" class="control-label"></label>
-                    <input asp-for="EndTime" type="time" class="form-control" required />
-                </div>
-                <div class="form-group">
-                    <label asp-for="ActiveHours" class="control-label"></label>
+        <form id="contactus" asp-controller="WorkHour" asp-action="Edit" method="post">
+            <div class="form-group text-center  text-success mb-5">
+                <h1>Work Hour</h1>
+                <p>This is the Doctor's work hour set up.  Patient or Doctor can access each other at anytime from anywhere in the world.</p>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeekDays" class="control-label"></label>
+                <select asp-for="WeekDays" class="form-control w-50 offset-3 text-center select" asp-items="@(new SelectList(@ViewBag.DaysOfTheWeek, "Id", "Name"))" required> </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" type="time" class="form-control w-50 offset-3 text-center" required />
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" type="time" class="form-control w-50 offset-3 text-center" required />
+            </div>
 
-                </div>
-                <div class="form-group text-center">
-                    <input asp-action="WorkHourSetUp" type="submit" value="Set Up" class="btn color w-50" />
-                </div>
-                <div class="form-group offset-11">
-                    <a asp-action="Index">Back</a>
-                </div>
-            </form>
+            <div class="form-group text-center">
+                <input asp-controller="Doctor" asp-action="WorkHourSetUp" type="submit" value="Set Up" class="btn shadow w-25" />
+            </div>
+            <div class="form-group offset-11">
+                <a asp-action="WorkHourSetUp">Back</a>
+            </div>
+        </form>
         </div>
     </div>
 </div>
